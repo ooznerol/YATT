@@ -81,6 +81,8 @@ private:
 
     QChart *chart;
 
+    modelTrades* modeltrades;
+
 
 
 };

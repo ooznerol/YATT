@@ -22,21 +22,62 @@ enum{
     column_MAX
 };
 
-modelTrades::modelTrades(QObject *parent)
-    : QAbstractItemModel(parent)
+modelTrades::modelTrades(QObject *parent) : QAbstractTableModel(parent)
 {
 }
-#
+
+
+
+int modelTrades::rowCount(const QModelIndex &parent) const
+{
+//    if (!parent.isValid())
+//        return 0;
+//    else
+    int rows ;
+
+
+#ifdef TEST
+   rows = 2;
+#else
+   rows = ListOfTrades.size();
+#endif
+
+   //qDebug() <<  "rows="<<  rows;
+   return rows;
+
+    // FIXME: Implement me!
+}
+
+int modelTrades::columnCount(const QModelIndex &parent) const
+{
+//    if (!parent.isValid())
+//        return 0;
+//    else
+
+    int cols;
+
+#ifdef TEST
+   cols = 3;
+#else
+   cols = column_MAX;
+#endif
+
+    //qDebug() <<  "cols=" << cols;
+    return cols;
+
+
+    // FIXME: Implement me!
+}
+
 QVariant modelTrades::headerData(int section, Qt::Orientation orientation, int role) const
 {
 
-qDebug() <<  "headerDataorientation ="<<  orientation;
 #ifdef TEST
 
 #else
 
-if (role != Qt::DisplayRole)
-        return QVariant();
+    if (role != Qt::DisplayRole)
+            return QVariant();
 
     if (orientation == Qt::Horizontal) {
         switch (section)
@@ -46,6 +87,8 @@ if (role != Qt::DisplayRole)
             case columndateUTC:
                 return QString("dateUTC");
             case columninstrumentName:
+                return QString("instrumentName");
+            case columnperiod:
                 return QString("period");
             case columnprofitAndLoss:
                 return QString("profitAndLoss");
@@ -75,56 +118,6 @@ if (role != Qt::DisplayRole)
 }
 
 
-QModelIndex modelTrades::index(int row, int column, const QModelIndex &parent) const
-{
-    // FIXME: Implement me!
-}
-
-QModelIndex modelTrades::parent(const QModelIndex &index) const
-{
-    // FIXME: Implement me!
-}
-
-int modelTrades::rowCount(const QModelIndex &parent) const
-{
-//    if (!parent.isValid())
-//        return 0;
-//    else
-    int rows ;
-
-
-#ifdef TEST
-   rows = 2;
-#else
-   rows = ListOfTrades.size();
-#endif
-
-   qDebug() <<  "rows="<<  rows;
-   return rows;
-
-    // FIXME: Implement me!
-}
-
-int modelTrades::columnCount(const QModelIndex &parent) const
-{
-//    if (!parent.isValid())
-//        return 0;
-//    else
-
-    int cols;
-
-#ifdef TEST
-   cols = 3;
-#else
-   cols = column_MAX;
-#endif
-
-    qDebug() <<  "cols=" << cols;
-    return cols;
-
-
-    // FIXME: Implement me!
-}
 
 QVariant modelTrades::data(const QModelIndex &index, int role) const
 {
@@ -142,30 +135,34 @@ QVariant modelTrades::data(const QModelIndex &index, int role) const
         if (role == Qt::DisplayRole)
         {
 
-                switch (index.row())
+                //qDebug() <<  "index.row()=" << index.row() <<"index.cols()=" << index.cols();
+                switch (index.column())
                 {
                     case columndate:
-                        return QString("date");
+                        return QString(ListOfTrades.at(index.row()).date);
                     case columndateUTC:
-                        return QString("dateUTC");
+                        return QString(ListOfTrades.at(index.row()).dateUTC);
+
+                    case columnperiod:
+                        return QString(ListOfTrades.at(index.row()).period);
                     case columninstrumentName:
-                        return QString("period");
+                        return QString(ListOfTrades.at(index.row()).instrumentName);
                     case columnprofitAndLoss:
-                        return QString("profitAndLoss");
+                        return QString(ListOfTrades.at(index.row()).profitAndLoss);
                     case columntransactionType:
-                        return QString("transactionType");
+                        return QString(ListOfTrades.at(index.row()).transactionType);
                     case columnreference:
-                        return QString("reference");
+                        return QString(ListOfTrades.at(index.row()).reference);
                     case columnopenLevel:
-                        return QString("openLevel");
+                        return QString(QString::number(ListOfTrades.at(index.row()).openLevel));
                     case columcloseLevel:
-                        return QString("closeLevel");
+                        return QString(QString::number(ListOfTrades.at(index.row()).closeLevel));
                     case columsize:
-                        return QString("size");
+                        return QString(QString::number(ListOfTrades.at(index.row()).size));
                     case columcurrency:
-                        return QString("currency");
+                        return QString(ListOfTrades.at(index.row()).currency);
                     case columcashTransaction:
-                        return QString("cashTransaction");
+                        return QString(ListOfTrades.at(index.row()).cashTransaction);
 
                 }
 
@@ -192,4 +189,11 @@ void modelTrades::addOneEntry(TransactionStruct Data)
         endInsertRows();
 
 
+}
+
+void modelTrades::Clear(  )
+{
+    beginResetModel();
+    ListOfTrades.clear();
+    endResetModel();
 }

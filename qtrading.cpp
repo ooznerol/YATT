@@ -7,7 +7,7 @@
 
 
 
-modelTrades* modeltrades;
+
 
 Qtrading::Qtrading(QWidget *parent) :
     QMainWindow(parent),
@@ -65,10 +65,11 @@ Qtrading::Qtrading(QWidget *parent) :
 
     ui->tableWidget_trades->setHorizontalHeaderLabels(HeaderLabels);
 
-    modeltrades = new modelTrades(0);
+    modeltrades = new modelTrades(this);
+    ui->tableView->setModel(modeltrades);
 
-    modelTrades mymodel(0);
-    ui->tableView->setModel(&mymodel);
+//    modelTrades mymodel(0);
+//    ui->tableView->setModel(&mymodel);
 
 
     chart = new QChart();
@@ -223,7 +224,7 @@ void Qtrading::replyFinished(QNetworkReply *reply)
 
         QJsonObject obj = value.toObject();
         CurrentTransaction.date = obj["date"].toString();
-        CurrentTransaction.dateUTC = obj["dateUTC"].toString();
+        CurrentTransaction.dateUTC = obj["dateUtc"].toString();
         CurrentTransaction.instrumentName = obj["instrumentName"].toString();
         CurrentTransaction.period = obj["period"].toString();
         CurrentTransaction.profitAndLoss = obj["profitAndLoss"].toString();
