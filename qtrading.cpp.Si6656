@@ -90,45 +90,11 @@ void Qtrading::sslErrors(QNetworkReply* reply,QList<QSslError> ListError)
     };
 }
 
-void Qtrading::Connection_LightStreamerRequest()
-{
-    url.setUrl(ig_lightstreamerEndPoint + "/lightstreamer/create_session.txt"); //
-    write_LOG(LOG_NORMAL,QTime::currentTime(),"try to connect to lightstreamer: " + url.url() );
-    ui->textEdit->append("\nlightstreamer connection");
-
-    QJsonObject Data;
-    Data["LS_user"] = AccountID;
-    qDebug() << "LS_user="  << AccountID;
-
-    //lightStreamer PAssword = CST-CST token|XST-X-SECURITY-TOKEN
-//    QString CST = "CST-" + rawHeader_CST;
-//    QString X_SECURITY_TOKEN = "XST-" +  rawHeader_X_SECURITY_TOKEN;
-    //QString ls_password = CST +"|"+ X_SECURITY_TOKEN;
-
-    QString ls_password ="CST-" + rawHeader_CST + "|XST-" + rawHeader_X_SECURITY_TOKEN;
-    qDebug() << "LS_password="  << ls_password;
-    Data["LS_password"] = ls_password/*ig_password*/;
-
-//    Data["LS_adapter_set"] = "";
-    QByteArray jsonPost = QJsonDocument(Data).toJson();
-    CurrentRequest = RequestConnectionLightStreamer;
-
-    QNetworkRequest requestConnect;
-    requestConnect.setUrl(url);
-    requestConnect.setRawHeader("Content-Type", "application/json; charset=UTF-8");
-    requestConnect.setRawHeader("Accept", "application/json; charset=UTF-8");
-//    requestConnect.setRawHeader("X-IG-API-KEY", ig_API.toUtf8());
-//    requestConnect.setRawHeader("Version", "2");
-    manager->post(requestConnect, jsonPost);
-}
-
-
 
 #if 1
 void Qtrading::Connection_Request()
 {
     ui->textEdit->clear();
-    ui->textEdit->append("\nig connection\n");
 
     ig_username = dialogConnection->GetLogin();
     ig_password = dialogConnection->GetPassword();
@@ -167,8 +133,6 @@ void Qtrading::Connection_Request()
         url.setUrl("https://demo-api.ig.com/gateway/deal/session");
     write_LOG(LOG_NORMAL,QTime::currentTime(),"try to connect to : " + url.url() );
 
-
-#if 0
     //instanciates new LSClient object with connection parameters
     lsclient* lsc = new lsclient(url.url(), ig_username, ig_password);
 
@@ -177,9 +141,8 @@ void Qtrading::Connection_Request()
                                              {"MARKET:IX.D.CAC.IMF.IP",
                                               "MARKET:IX.D.DAX.IMF.IP"},
                                              {"BID","OFFER"}));
-#endif
 
-#if 1
+#if 0
     QNetworkRequest requestConnect;
     requestConnect.setUrl(url);
     requestConnect.setRawHeader("Content-Type", "application/json; charset=UTF-8");
@@ -193,8 +156,6 @@ void Qtrading::Connection_Request()
     QByteArray jsonPost = QJsonDocument(Data).toJson();
     CurrentRequest = RequestConnection;
     manager->post(requestConnect, jsonPost);
-
-
 #endif
 }
 
@@ -204,25 +165,6 @@ void Qtrading::replyencryptedFinished(QNetworkReply *reply)
     QByteArray Answer = reply->readAll();
     qDebug() << "replyencryptedFinished : " << Answer;
 }
-
-void Qtrading::ProcessConnectionLightStreamerRequestAnswer(QNetworkReply *reply)
-{
-    QByteArray Answer = reply->readAll();
-    ui->textEdit->append("\nConnectionLightStreamerRequestAnswer\n");
-    if (Answer.contains("ERROR"))
-    {
-         write_LOG(LOG_ERROR,QTime::currentTime(),"Connection to LightStreamer KO");
-    }
-    else
-    {
-         write_LOG(LOG_SUCCESS,QTime::currentTime(),"Connection to LightStreamer OK");
-    }
-    ui->textEdit->append(Answer);
-    CurrentRequest = NoRequest;
-}
-
-
-
 
 void Qtrading::ProcessConnectionRequestAnswer(QNetworkReply *reply)
 {
@@ -251,8 +193,7 @@ void Qtrading::ProcessConnectionRequestAnswer(QNetworkReply *reply)
         ui->lineEdit_AccountProfitLoss->setText(QString::number(profitLoss.toDouble(),'f',2));
 
         QJsonValue currentAccountId = JsonObj.value("currentAccountId");
-        AccountID = currentAccountId.toString();
-        ui->lineEdit_AccountID->setText((AccountID));
+        ui->lineEdit_AccountID->setText((currentAccountId.toString()));
 
         //Get security header
         QList<QByteArray> rawHeaderList = reply->rawHeaderList();
@@ -265,10 +206,6 @@ void Qtrading::ProcessConnectionRequestAnswer(QNetworkReply *reply)
                 rawHeader_CST = reply->rawHeader("CST");
         }
 
-
-        QJsonValue currentAccountlightstreamerEndPoint = JsonObj.value("lightstreamerEndpoint");
-        ig_lightstreamerEndPoint = currentAccountlightstreamerEndPoint.toString();
-
         ui->pushButton_Get->setEnabled(true);
         ui->dateEdit_StartDate->setEnabled(true);
         ui->dateEdit_EndDate->setEnabled(true);
@@ -276,18 +213,13 @@ void Qtrading::ProcessConnectionRequestAnswer(QNetworkReply *reply)
         dialogConnection->hide();
         write_LOG(LOG_SUCCESS,QTime::currentTime(),"Connection to IG OK");
 
-        CurrentRequest = RequestConnectionLightStreamer;
-        Connection_LightStreamerRequest();
-
     }
     else
     {
         QString error = errorCode.toString() ;
         write_LOG(LOG_ERROR,QTime::currentTime(),"Connection to IG failed :" + error);
-        CurrentRequest = NoRequest;
     }
-
-    ui->textEdit->append("\nProcessConnectionRequestAnswer\n");
+    CurrentRequest = NoRequest;
     ui->textEdit->append(Answer);
 }
 
@@ -296,17 +228,9 @@ void Qtrading::replyFinished(QNetworkReply *reply)
 {
     if (CurrentRequest == RequestConnection)
         ProcessConnectionRequestAnswer(reply);
+
     else if (CurrentRequest == RequestGetTransactionList)
         ProcessGetTransactionListRequestAnswer(reply);
-    else if (CurrentRequest == RequestConnectionLightStreamer)
-        ProcessConnectionLightStreamerRequestAnswer(reply);
-
-    else
-    {
-        QByteArray Answer = reply->readAll();
-        ui->textEdit->append("\nunknowRequestAnswer");
-        ui->textEdit->append(Answer);
-    }
 }
 
 

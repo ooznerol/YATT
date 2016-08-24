@@ -27,6 +27,8 @@ public:
 public slots:
     void Clear();
 private:
+
+    quint16 precision;
 };
 
 #endif // MODELTRADES_H

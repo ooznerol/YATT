@@ -1,21 +1,23 @@
 #include "modeltrades.h"
 
 #include "QDebug"
+#include "QColor"
 
 //#define TEST
 enum{
     columndate,
     columndateUTC,
     columninstrumentName,
-    columnperiod,
+    //columnperiod,
     columnprofitAndLoss,
-    columntransactionType,
-    columnreference,
+    //columntransactionType,
+    //columnreference,
     columnopenLevel,
     columcloseLevel,
+    columdeltapoint,
     columsize,
-    columcurrency,
-    columcashTransaction,
+    //columcurrency,
+    //columcashTransaction,
 
 
 
@@ -24,6 +26,8 @@ enum{
 
 modelTrades::modelTrades(QObject *parent) : QAbstractTableModel(parent)
 {
+
+    precision = 1;
 }
 
 
@@ -88,24 +92,26 @@ QVariant modelTrades::headerData(int section, Qt::Orientation orientation, int r
                 return QString("dateUTC");
             case columninstrumentName:
                 return QString("instrumentName");
-            case columnperiod:
-                return QString("period");
+//            case columnperiod:
+//                return QString("period");
             case columnprofitAndLoss:
                 return QString("profitAndLoss");
-            case columntransactionType:
-                return QString("transactionType");
-            case columnreference:
-                return QString("reference");
+//            case columntransactionType:
+//                return QString("transactionType");
+//            case columnreference:
+//                return QString("reference");
             case columnopenLevel:
                 return QString("openLevel");
             case columcloseLevel:
                 return QString("closeLevel");
+            case columdeltapoint:
+                return QString("delta");
             case columsize:
                 return QString("size");
-            case columcurrency:
-                return QString("currency");
-            case columcashTransaction:
-                return QString("cashTransaction");
+//            case columcurrency:
+//                return QString("currency");
+//            case columcashTransaction:
+//                return QString("cashTransaction");
 
             default:
                 return QVariant();
@@ -132,6 +138,7 @@ QVariant modelTrades::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
     else
+    {
         if (role == Qt::DisplayRole)
         {
 
@@ -143,30 +150,50 @@ QVariant modelTrades::data(const QModelIndex &index, int role) const
                     case columndateUTC:
                         return QString(ListOfTrades.at(index.row()).dateUTC);
 
-                    case columnperiod:
-                        return QString(ListOfTrades.at(index.row()).period);
+//                    case columnperiod:
+//                        return QString(ListOfTrades.at(index.row()).period);
                     case columninstrumentName:
                         return QString(ListOfTrades.at(index.row()).instrumentName);
                     case columnprofitAndLoss:
                         return QString(ListOfTrades.at(index.row()).profitAndLoss);
-                    case columntransactionType:
-                        return QString(ListOfTrades.at(index.row()).transactionType);
-                    case columnreference:
-                        return QString(ListOfTrades.at(index.row()).reference);
+//                    case columntransactionType:
+//                        return QString(ListOfTrades.at(index.row()).transactionType);
+//                    case columnreference:
+//                        return QString(ListOfTrades.at(index.row()).reference);
                     case columnopenLevel:
-                        return QString(QString::number(ListOfTrades.at(index.row()).openLevel));
+                        //return QString(ListOfTrades.at(index.row()).openLevel);
+                        return QString(QString::number(ListOfTrades.at(index.row()).openLevel,'f',precision));
                     case columcloseLevel:
-                        return QString(QString::number(ListOfTrades.at(index.row()).closeLevel));
+                        //return QString(ListOfTrades.at(index.row()).closeLevel);
+                        return QString(QString::number(ListOfTrades.at(index.row()).closeLevel,'f',precision));
+                    case columdeltapoint:
+
+                    //return QString(ListOfTrades.at(index.row()).deltaPoint);
+                        return QString(QString::number(ListOfTrades.at(index.row()).deltaPoint,'f',precision));
                     case columsize:
-                        return QString(QString::number(ListOfTrades.at(index.row()).size));
-                    case columcurrency:
-                        return QString(ListOfTrades.at(index.row()).currency);
-                    case columcashTransaction:
-                        return QString(ListOfTrades.at(index.row()).cashTransaction);
+                        //return QString(QString::number(ListOfTrades.at(index.row()).size));
+                        return QString((ListOfTrades.at(index.row()).size));
+//                    case columcurrency:
+//                        return QString(ListOfTrades.at(index.row()).currency);
+//                    case columcashTransaction:
+//                        return QString(ListOfTrades.at(index.row()).cashTransaction);
 
                 }
 
         }
+        if (role == Qt::BackgroundColorRole)
+        {
+            if ((ListOfTrades.at(index.row()).profitAndLoss).contains("-"))
+            {
+                return QVariant(QColor(Qt::red));
+            }
+            else
+            {
+                return QVariant(QColor(Qt::green));
+            }
+
+        }
+    }
 
     // FIXME: Implement me!
 #endif

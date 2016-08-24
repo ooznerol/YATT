@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>finance.ico</file>
+    </qresource>
+</RCC>

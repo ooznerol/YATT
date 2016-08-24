@@ -7,17 +7,15 @@
 #include "QSettings"
 #include "common.h"
 #include "modeltrades.h"
+#include "dialogconnection.h"
 
 #include <QtCharts>
 
+#include "lsclient.h"
+
 using namespace QtCharts;
 
-#define LOG_DEBUG_FULL      0x01
-#define LOG_DEBUG           0x02
-#define LOG_NORMAL          0x04
-#define LOG_WARNING         0x08
-#define LOG_ERROR           0x10
-#define LOG_SUCCESS         0x20
+
 
 
 
@@ -40,18 +38,28 @@ public slots:
     void sslErrors(QNetworkReply *, QList<QSslError>);
     void replyencryptedFinished(QNetworkReply *reply);
     void write_LOG(int debug_level, QTime timestamp, QString log);
+
+
+    void Connection_LightStreamerRequest();
+    void ProcessConnectionLightStreamerRequestAnswer(QNetworkReply *reply);
 private slots:
 
     void replyFinished(QNetworkReply *);
 //    void onProxyAuthenticationRequired(const QNetworkProxy &prox, QAuthenticator *auth);
 //    void onauthenticationRequired(QNetworkReply*,QAuthenticator*);
 
-    void on_pushButton_Connect_clicked();
+    void Connection_Request();
     void on_pushButton_Get_clicked();
 
-    void on_comboBox_AccountType_currentIndexChanged(const QString &arg1);
+//    void on_comboBox_AccountType_currentIndexChanged(const QString &arg1);
 
     void createLogFile(QString log_file_path);
+    void ProcessGetTransactionListRequestAnswer(QNetworkReply *reply);
+    void ProcessConnectionRequestAnswer(QNetworkReply *reply);
+    void GetListOfTrades(int page);
+    void on_actionConnect_triggered();
+
+
 private:
     Ui::Qtrading *ui;
     QString mainUrl;
@@ -62,6 +70,8 @@ private:
     QString ig_password;
     QString ig_API;
     QString ig_AccountType;
+    QString AccountID;
+    QString ig_lightstreamerEndPoint;
 
     QString ls_url;
     QString ls_username;
@@ -82,6 +92,22 @@ private:
     QChart *chart;
 
     modelTrades* modeltrades;
+
+    quint16 CurrentRequest;
+
+    int CurrentPageNumber;
+    int TotalPages;
+
+    int numberOftradesWon ;
+    int numberOftradesLost;
+    int numberOftradesFlat ;
+
+    double numberOfPointsWon ;
+    double numberOfPointsLost;
+    double numberOfPointsTotal;
+
+    DialogConnection *dialogConnection;
+
 
 
 
