@@ -11,7 +11,7 @@ QT += charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = QTrading
+TARGET = YATT
 TEMPLATE = app
 
 
@@ -19,27 +19,29 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         qtrading.cpp \
-	lsclient.cpp \
-    	lssubscription.cpp \
-    	lstable.cpp \
     	modeltrades.cpp \
     	dialogconnection.cpp \
-#    http.cpp
+    mainwindowlog.cpp \
+    mainwindowhistory.cpp \
+    igls.cpp
+
 #   // sleeper.cpp
 
 HEADERS  += qtrading.h \
-    lsclient.h \
-    lssubscription.h \
-    lstable.h \
-    assoc.h \
     sleeper.h \
     modeltrades.h \
     common.h \
     dialogconnection.h \
-#    http.hpp
+    mainwindowlog.h \
+    mainwindowhistory.h \
+    igls.h
+
 
 FORMS    += qtrading.ui \
-    dialogconnection.ui
+    dialogconnection.ui \
+    mainwindowlog.ui \
+    mainwindowhistory.ui \
+
 
 RESOURCES += \
     image.qrc
@@ -48,6 +50,8 @@ DISTFILES += \
     Qtrading.rc
 
 win32:RC_ICONS += finance.ico
+#macx:ICON = $${PWD}/my_app.icns
+macx:ICON = finance.icns
 
 
 #######################################

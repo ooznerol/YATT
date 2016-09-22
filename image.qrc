@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>finance.ico</file>
+        <file>finance.icns</file>
     </qresource>
 </RCC>

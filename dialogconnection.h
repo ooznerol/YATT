@@ -21,22 +21,26 @@ public:
 
 public slots:
     QString GetAccountType();
-    QString GetPassword();
-    QString GetLogin();
-    QString GetAPIKey();
-    QString Getproxy();
-    QString GetproxyHostName();
-    quint16 GetproxyPort();
+//    QString GetPasswordREAL();
+//    QString GetLoginREAL();
+//    QString GetAPIKeyREAL();
+
+//    QString GetPasswordDEMO();
+//    QString GetLoginDEMO();
+//    QString GetAPIKeyDEMO();
+
+    struct StructProxy Getproxy();
+    void SetAccountType(QString Type);
+    StructAccountInfo GetAccountDemoInfo();
+    StructAccountInfo GetAccountRealInfo();
+
 private slots:
     void on_pushButton_Connect_clicked();
-
-//    void sslErrors(QNetworkReply *reply, QList<QSslError> ListError);
-//    void replyencryptedFinished(QNetworkReply *reply);
-//    void replyFinished(QNetworkReply *reply);
-
     void on_comboBox_AccountType_currentIndexChanged(const QString &arg1);
     void on_comboBox_proxy_activated(const QString &arg1);
+    void on_radioButtonAutoConnect_clicked(bool checked);
 
+    void FillAccountInfo(QString Type);
 private:
     Ui::DialogConnection *ui;
     QSettings *GUI_Settings;
@@ -52,10 +56,11 @@ private:
     QString rawHeader_X_SECURITY_TOKEN;
     QString rawHeader_CST;
     QUrl url;
+    struct StructAccountInfo CurrentAccount;
 
 signals:
     void write_LOG(int,QTime,QString);
-    void RequestConnection();
+    void RequestConnection(QString);
     void ConnectionResult (bool IsConnected,QString currentrawHeader,QString rawHeader_CST,AccountInfo CurrentAccount);
 };
 

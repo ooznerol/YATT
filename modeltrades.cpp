@@ -1,3 +1,19 @@
+//    This file is part of YATT.
+
+//    YATT is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+
+//    YATT is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+
+//    You should have received a copy of the GNU General Public License
+//    along with YATT.  If not, see <http://www.gnu.org/licenses/>. 2
+
+
 #include "modeltrades.h"
 
 #include "QDebug"
@@ -186,6 +202,10 @@ QVariant modelTrades::data(const QModelIndex &index, int role) const
             if ((ListOfTrades.at(index.row()).profitAndLoss).contains("-"))
             {
                 return QVariant(QColor(Qt::red));
+            }
+            else if ((ListOfTrades.at(index.row()).closeLevel) == (ListOfTrades.at(index.row()).openLevel))
+            {
+                return QVariant(QColor(Qt::gray));
             }
             else
             {
